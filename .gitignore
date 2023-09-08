@@ -167,3 +167,4 @@ mlruns/
 
 artifacts/
 data/storage/
+predictions/
