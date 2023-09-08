@@ -23,7 +23,12 @@ def extract_floor(floor_info: str) -> int:
     Args:
         floor_info (str): 층수 정보
     """
-    # TODO
+
+    split_floor_info = floor_info.split()[0]
+    if not split_floor_info.isnumeric():
+        split_floor_info = "0"
+
+    return int(split_floor_info)
 
 
 def floor_extractor(df: pd.DataFrame, col: str) -> pd.DataFrame:
@@ -46,15 +51,16 @@ def floor_extractor(df: pd.DataFrame, col: str) -> pd.DataFrame:
 # 1. 방의 크기는 제곱근을 적용함 (FunctionTransformer 사용)
 # 2. 층수는 실제 층수를 추출하되 숫자가 아닌 Basement 등은 0층으로 표기함
 # 3. 범주형 변수(CAT_FEATURES)는 타겟 인코딩 적용 (from category_encoders import TargetEncoder)
+
 preprocess_pipeline = ColumnTransformer(
     transformers=[
-        # TODO,
+        ("sqrt_transformer", FunctionTransformer(np.sqrt), ["size"]),
         (
             "floor_extractor",
             FunctionTransformer(floor_extractor, kw_args={"col": "floor"}),
             ["floor"],
         ),
-        # TODO,
+        ("target_encoder", TargetEncoder(cols=CAT_FEATURES), CAT_FEATURES),
     ],
     remainder="passthrough",
     verbose_feature_names_out=False,
